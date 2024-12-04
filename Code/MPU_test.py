@@ -14,8 +14,7 @@ while True:
         # printer hele dictionary som returneres fra get_values metoden
         values = imu.get_values()
         
-        print(values.get("acceleration x"), values.get("acceleration y"), values.get("acceleration z"), values.get("temperature celsius"))
-        
+        print(values.get("acceleration x"), values.get("acceleration y"), values.get("acceleration z"), values.get("temperature celsius"))  
         
         sleep(1)
     except KeyboardInterrupt:
