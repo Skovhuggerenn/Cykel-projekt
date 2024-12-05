@@ -7,12 +7,14 @@ from cykelkode.thingsboard import ThingsBoard
 from cykelkode.battery_status import BatteryStatus
 from cykelkode.ina_sensor import INA
 from cykelkode.temp_sensor import TempSensor
+from cykelkode.imu_sensor import IMU
 
 lcd = GpioLcd(Pin(27), Pin(25), Pin(33), Pin(32), Pin(21), Pin(22), 4, 20)
 
 bat_stat = BatteryStatus()
 ina = INA()
 temp_sen = TempSensor()
+imu_sen = IMU()
 
 while True:
     try:
@@ -33,6 +35,10 @@ while True:
         humidity = temp_sen.getHumidity()
         
         # IMU
+        imu_data = imu_sen.getIMUData()
+        accel_x = imu_data.get("acceleration x")
+        accel_y = imu_data.get("acceleration y")
+        accel_z = imu_data.get("acceleration z")
         
         # GPS 
         
@@ -50,8 +56,8 @@ while True:
         
         lcd.move_to(0, 0)
         lcd.putstr(str(int(bat_p))+ "% " + str(int(bat_current))+" mA ")
-        #lcd.move_to(0, 1)
-        """
+        lcd.move_to(0, 1)
+        
         lcd.putstr(str(int(bat_vol))+ " V " + str(int(bat_life)) + " h")
         print(str(int(bat_p))+ "% " + str(int(bat_current))+" mA " + str(int(bat_vol))+ " V " + str(int(bat_life)) + " h ")
         sleep(3)
@@ -62,7 +68,9 @@ while True:
         lcd.putchar(chr(0))
         lcd.move_to(5, 0)
         lcd.putstr(str(humidity) + " Humidity")
-        """
+        
+        print(accel_x, accel_y, accel_z)
+        
         sleep(2)
         lcd.clear()
         
@@ -72,5 +80,7 @@ while True:
         reset()                           # reset ESP32
 
         
+
+
 
 
