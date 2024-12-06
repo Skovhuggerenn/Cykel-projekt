@@ -45,12 +45,10 @@ while True:
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
-        # Break light check
-        break_status = imu_sen.breakCheck()
-        if break_status:
-            led_lights.turnOnBreakLight()
-            sleep(2)
-            led_lights.turnOffBreakLight()
+        # Brake light check
+        brake_status = imu_sen.brakeCheck()
+        led_lights.ledLightOnBrake(brake_status)
+
         
         # GPS
         gps_data = gps_sen.get_gps_data()
