@@ -12,18 +12,14 @@ class IMU:
     def getIMUData(self):
         return self.imu.get_values()
     
-    def brakeLight(self):
+    def breakCheck(self):
         imu_data = self.imu.get_values()
         accel_x = imu_data.get("acceleration x")
         
-        print(abs(accel_x - self.prev_accel_x))
         if abs(accel_x - self.prev_accel_x) >= 20000: 
-            print(accel_x, "Accel_X")
-            self.led_red.on()
-            sleep(1)
+            return True
         else:
-            self.led_red.off()
-        sleep(1)
+            return False
         self.prev_accel_x = accel_x
         
     def imu_stop_test(self):
