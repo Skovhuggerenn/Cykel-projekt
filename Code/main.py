@@ -36,11 +36,11 @@ while True:
         bat_vol = ina.getVoltage()
         bat_life = ina.getEstimateBatLifeHours()
         
-        # Temp measurements
+        # Temperature & Humidity measurements
         temp = temp_sen.getTemp()
         humidity = temp_sen.getHumidity()
         
-        # IMU
+        # IMU meassurements
         imu_data = imu_sen.getIMUData()
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
@@ -48,9 +48,10 @@ while True:
         # Brake light check
         brake_status = imu_sen.brakeCheck()
         led_lights.ledLightOnBrake(brake_status)
-
+        # Stopped check
+        bike_stopped =  imu_sen.imu_stoppedCheck()
         
-        # GPS
+        # GPS meassurements
         gps_data = gps_sen.get_gps_data()
         
         # Buzzer
@@ -64,11 +65,12 @@ while True:
         
         # Print to console (TODO)
         
-        # Send data til thingsboard
-        telemetry = {"latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2], "gps_course"gps_data[3], "Temperature": temp, "Humidity": humidity, "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol}
-        thingsboard.sendDataToThingsboard(telemetry)
+        # Send data til thingsboard if not stopped
+        if bike_stopped:  
+            telemetry = {"latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2], "gps_course"gps_data[3], "Temperature": temp, "Humidity": humidity, "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol}
+            thingsboard.sendDataToThingsboard(telemetry)
         
-        sleep(2)
+        sleep(3)
 
     except KeyboardInterrupt:
         print("Disconnected!")

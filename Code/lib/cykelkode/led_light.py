@@ -8,16 +8,16 @@ class LED_Lights:
         #self.led_drink = Pin(18, Pin.OUT)
         #self.led_alarm = Pin(18, Pin.OUT)
         
-    def turnOnBrakeLight(self):
-        self.led_brake.on()
-        
-    def turnOffBrakeLight(self):
-        self.led_brake.off()
     
     def ledLightOnBrake(self, break_status):
-        if brake_status and not brake_active:
-            brake_timer = ticks_ms()
-            brake_active = True
+        if brake_status and not self.brake_active:
+            brake_timer_start = ticks_ms()
+            self.brake_active = True
+            self.led_brake.on()
         else:
+            if (ticks_ms() - brake_timer_start) > 1000:
+                self.led_brake.off()
+                self.brake_active = False
+                
             
             
