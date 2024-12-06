@@ -63,7 +63,12 @@ while True:
         lcd_display.putTwoDataOnDisplay(int(bat_vol), "V", int(bat_life), "h")
         lcd_display.putTemp(temp)
         lcd_display.putTwoDataOnDisplay(humidity, "Humidity")
-
+        
+        # Print to console (TODO)
+        
+        # Send data til thingsboard
+        telemetry = {"latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2], "gps_course"gps_data[3], "Temperature": temp, "Humidity": humidity, "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol}
+        thingsboard.sendDataToThingsboard(telemetry)
         
         sleep(2)
 
