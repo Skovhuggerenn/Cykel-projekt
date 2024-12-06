@@ -67,7 +67,10 @@ while True:
         
         # Send data til thingsboard if not stopped
         if bike_stopped:  
-            telemetry = {"latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2], "gps_course"gps_data[3], "Temperature": temp, "Humidity": humidity, "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol}
+            telemetry = { "latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2],
+                         "gps_course"gps_data[3], "Temperature": temp,
+                         "Humidity": humidity, "Battery":bat_p,
+                         "Current":bat_current, "Bat_voltage": bat_vol }
             thingsboard.sendDataToThingsboard(telemetry)
         
         sleep(3)
