@@ -14,7 +14,7 @@ class IMU:
     
     def brakeLight(self):
         imu_data = self.imu.get_values()
-        accel_x = self.imu_data.get("acceleration x")
+        accel_x = imu_data.get("acceleration x")
         
         print(abs(accel_x - self.prev_accel_x))
         if abs(accel_x - self.prev_accel_x) >= 20000: 
