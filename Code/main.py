@@ -46,7 +46,7 @@ while True:
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
         # Brake light check
-        brake_status = imu_sen.brakeCheck()
+        brake_status = imu_sen.brakeCheck(5000)
         led_lights.ledLightOnBrake(brake_status)
         # Stopped check
         bike_stopped =  imu_sen.imu_stoppedCheck()
@@ -55,9 +55,9 @@ while True:
         gps_data = gps_sen.get_gps_data()
         
         # Buzzer
-        buzzer.buzz(330, 1, 1)
+        buzzer.buzzNonBlock(330, 2000)
         
-        # Display on LCD
+        # Display on LCD (Need to be done Non-blocking style)
         lcd_display.putTwoDataOnDisplay(int(bat_p), "%", int(bat_current), "mA")
         lcd_display.putTwoDataOnDisplay(int(bat_vol), "V", int(bat_life), "h")
         lcd_display.putTemp(temp)
