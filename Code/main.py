@@ -58,7 +58,10 @@ while True:
         buzzer.buzzNonBlock(330, 2000)
         
         # Neopixel
-        neo_pixel.set_color(150, 0, 0)  
+        neo_pixel.set_color(150, 0, 0)
+        
+        # Alarm system (TODO)
+        
         
         # Display on LCD (Need to be done Non-blocking style)
         lcd_display.putDataOnLCD(int(bat_p), "%")
