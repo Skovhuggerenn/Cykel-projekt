@@ -18,19 +18,12 @@ class LCDDisplay:
         lcd.custom_char(0, degree_sym)
     
     
-    def putTwoDataOnDisplay(self, data1, symbol1,  data2="", symbol2=""):
-        self.lcd.putstr(str(data1) + " " +symbol1 + " " + str(data2) + " " + symbol2)
-        self.lcd.move_to(0, self.cursor)
-        new_cursor = (self.cursor + 1) % self.max_line
-        if (new_cursor == 0):
-            sleep(2)
-            self.lcd.clear()
-        self.cursor = new_cursor
+    def putDataOnLCD(self, data, symbol):
+        self.lcd.putstr(str(data1) + " " +symbol + " ")
         
-    def putTemp(self, temp):
+    def putTempOnLCD(self, temp):
         self.lcd.putstr(str(temp) + " ")
-        lcd.move_to(4, 0)
-        lcd.putchar(chr(0))
-        lcd.move_to(0, 0)
+        self.lcd.putchar(chr(0))
+        self.lcd.putchar("C")
         
         

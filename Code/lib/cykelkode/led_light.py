@@ -4,6 +4,7 @@ from time import ticks_ms
 class LED_Lights:
     def __init__(self):
         self.brake_active = False
+        self.brake_timer_start = 0
         self.led_brake = Pin(26, Pin.OUT)
         #self.led_drink = Pin(18, Pin.OUT)
         #self.led_alarm = Pin(18, Pin.OUT)
@@ -11,11 +12,11 @@ class LED_Lights:
     
     def ledLightOnBrake(self, break_status):
         if brake_status and not self.brake_active:
-            brake_timer_start = ticks_ms()
+            self.brake_timer_start = ticks_ms()
             self.brake_active = True
             self.led_brake.on()
         else:
-            if (ticks_ms() - brake_timer_start) > 1000:
+            if (ticks_ms() - self.brake_timer_start) >= 5000:
                 self.led_brake.off()
                 self.brake_active = False
                 

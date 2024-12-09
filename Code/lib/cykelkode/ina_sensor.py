@@ -12,6 +12,9 @@ class INA:
         ic2 = I2C(i2c_port)
         self.ina219 = INA219(ic2,  ina219_i2c_addr)
         self.ina219.set_calibration_16V_400mA()
+        
+        self.tot_current = 0
+        self.current_counter = 0
     
     def getCurrent(self):
         return self.ina219.get_current()
@@ -25,6 +28,19 @@ class INA:
             return self.bat_mAh / current
         else:
             return 0
+        
+    def getBetterEstimateBatLifeHours(self, current):
+        num_of_measurements = 20
+        self.current_counter += 1
+        if self.current_counter < num_of_measurements:
+            self.tot_current += current
+        else:
+            average = self.tot_current / num_of_measurements
+            
+            self.tot_current = 0
+            self.current_counter = 0
+            return average
+        
         
 # 1800 mAh
 
