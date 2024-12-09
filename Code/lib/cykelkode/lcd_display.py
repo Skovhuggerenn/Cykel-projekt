@@ -1,5 +1,5 @@
 from gpio_lcd import GpioLcd
-from time import sleep
+from machine import Pin
 
 class LCDDisplay:
     def __init__(self):
@@ -15,15 +15,15 @@ class LCDDisplay:
                                 0B00000,
                                 0B00000,
                                 0B00000])
-        lcd.custom_char(0, degree_sym)
+        self.lcd.custom_char(0, degree_sym)
     
     
     def putDataOnLCD(self, data, symbol):
-        self.lcd.putstr(str(data1) + " " +symbol + " ")
+        self.lcd.putstr(str(data) + " " +symbol + " ")
         
     def putTempOnLCD(self, temp):
         self.lcd.putstr(str(temp) + " ")
         self.lcd.putchar(chr(0))
-        self.lcd.putchar("C")
+        self.lcd.putstr("C ")
         
         

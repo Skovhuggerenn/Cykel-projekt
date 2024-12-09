@@ -7,7 +7,7 @@ class Buzzer:
         self.making_sound = False
         self.buz = PWM(Pin(14, Pin.OUT), duty=0)
 
-    def buzzNonBlock(freq, tone_duration):
+    def buzzNonBlock(self, freq, tone_duration):
         if not self.making_sound:
             self.buz.duty(512)
             self.buz.freq(freq)

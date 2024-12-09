@@ -11,7 +11,7 @@ from cykelkode.gps_sensor import GPS
 from cykelkode.buzzer import Buzzer
 from cykelkode.lcd_display import LCDDisplay
 from cykelkode.led_light import LED_Lights
-from cykelkode.neo_pixel import NeoPixel
+from cykelkode.neo_pixel import TheoPixel
 
 thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
@@ -21,8 +21,9 @@ imu_sen = IMU()
 gps_sen = GPS()
 buzzer = Buzzer()
 lcd_display = LCDDisplay()
-led_lights = LED_Lights()
-neo_pixel = NeoPixel()
+neo_pixel = TheoPixel()
+led_lights = LED_Lights(neo_pixel)
+
 
 while True:
     try:
@@ -36,8 +37,8 @@ while True:
         bat_p = bat_stat.getPercentage_batt()
         bat_current = ina.getCurrent()
         bat_vol = ina.getVoltage()
-        bat_life = ina.getEstimateBatLifeHours()
-        average_current = ina.getBetterEstimateBatLifeHours(current)        
+        average_current = ina.getAverageCurrent(bat_current)
+        bat_life = ina.getEstimateBatLifeHours(bat_p, average_current)
         
         # Temperature & Humidity measurements
         temp = temp_sen.getTemp()
@@ -46,19 +47,21 @@ while True:
         # IMU measurements
         imu_data = imu_sen.getIMUData()
         # Brake light check
-        brake_status = imu_sen.brakeCheck(15000)
+        brake_status = imu_sen.brakeCheck(4000)
         led_lights.ledLightOnBrake(brake_status)
         # Stopped check
-        bike_stopped =  imu_sen.imu_stoppedCheck()
+        bike_moving =  imu_sen.imu_stoppedCheck()
+        print(bike_moving)
         
         # GPS measurements
         gps_data = gps_sen.get_gps_data()
+        print(gps_data)
         
         # Buzzer
-        buzzer.buzzNonBlock(330, 2000)
+        #buzzer.buzzNonBlock(330, 2000)
         
         # Neopixel
-        neo_pixel.set_color(150, 0, 0)
+        #neo_pixel.set_color(150, 0, 0)
         
         # Alarm system (TODO)
         
@@ -68,8 +71,8 @@ while True:
         lcd_display.putDataOnLCD(int(bat_current), "mA")
         lcd_display.putDataOnLCD(int(bat_vol), "V")
         lcd_display.putDataOnLCD(int(bat_life), "h")
-        lcd_display.putTempOnLCD(temp)
-        lcd_display.putDataOnLCD(humidity, "Humidity")
+        #lcd_display.putTempOnLCD(temp)
+        #lcd_display.putDataOnLCD(humidity, "Humidity")
         
         # Print to console (TODO)
         """
@@ -78,11 +81,9 @@ while True:
         """
         
         # Send data til thingsboard if not stopped
-        if bike_stopped:  
-            telemetry = { "latitude":gps_data[0], "longitude":gps_data[1], "gps_speed": gps_data[2],
-                         "gps_course"gps_data[3], "Temperature": temp,
-                         "Humidity": humidity, "Battery":bat_p,
-                         "Current":bat_current, "Bat_voltage": bat_vol }
+        
+        if gps_data:
+            telemetry = {"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity}
             thingsboard.sendDataToThingsboard(telemetry)
         
         sleep(1)
@@ -93,6 +94,7 @@ while True:
         reset()                           # reset ESP32
 
         
+
 
 
 

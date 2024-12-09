@@ -19,11 +19,11 @@ class ThingsBoard:
         try:
             # check if the method is "toggle_led1" (needs to be configured on thingsboard dashboard)
             if method == "toggle_led1":
+                print("hello")
             
             # check if command is send from RPC remote shell widget   
             if method == "sendCommand":
-                message = params.get("command")
-                
+                message = params.get("command")        
 
         except TypeError as e:
             print(e)

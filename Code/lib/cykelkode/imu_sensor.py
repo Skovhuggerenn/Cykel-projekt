@@ -17,13 +17,14 @@ class IMU:
     
     def brakeCheck(self, brake_sensitivity):
         imu_data = self.imu.get_values()
-        accel_x = imu_data.get("acceleration x")
+        accel_y = imu_data.get("acceleration y")
+        #print(abs(accel_y - self.prev_accel_y))
         
-        if abs(accel_x - self.prev_accel_x) >= brake_sensitivity: 
+        if abs(accel_y - self.prev_accel_y) >= brake_sensitivity: 
             return True
         else:
             return False
-        self.prev_accel_x = accel_x
+        self.prev_accel_y = accel_y
         
     def imu_stoppedCheck(self):
         sensitivity = 1500

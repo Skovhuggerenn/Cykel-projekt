@@ -22,18 +22,18 @@ class INA:
     def getVoltage(self):
         return self.ina219.get_bus_voltage()
     
-    def getEstimateBatLifeHours(self):
-        current = self.getCurrent()
-        if current > 0:
-            return self.bat_mAh / current
+    def getEstimateBatLifeHours(self, procent, average_current):
+        if average_current > 0:
+            return (self.bat_mAh * (1/procent)) / average_current
         else:
             return 0
         
-    def getBetterEstimateBatLifeHours(self, current):
+    def getAverageCurrent(self, current):
         num_of_measurements = 20
         self.current_counter += 1
         if self.current_counter < num_of_measurements:
             self.tot_current += current
+            return 0
         else:
             average = self.tot_current / num_of_measurements
             
