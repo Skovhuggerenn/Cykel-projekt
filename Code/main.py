@@ -12,6 +12,7 @@ from cykelkode.buzzer import Buzzer
 from cykelkode.lcd_display import LCDDisplay
 from cykelkode.led_light import LED_Lights
 from cykelkode.neo_pixel import TheoPixel
+from cykelkode.væske_reminder import VæskeReminder
 
 #thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
@@ -23,7 +24,7 @@ buzzer = Buzzer()
 lcd_display = LCDDisplay()
 neo_pixel = TheoPixel()
 led_lights = LED_Lights(neo_pixel)
-
+væske_reminder = VæskeReminder()
 alarm_status = False
 
 # the handler callback that gets called when there is a RPC request from the server
@@ -79,6 +80,8 @@ while True:
             led_lights.led_alarm.off()
             buzzer.cutOff()
         
+        væske_reminder.checkReminderStatus(temp)
+        
         # GPS measurements
         gps_data = gps_sen.get_gps_data()
         
@@ -97,7 +100,6 @@ while True:
         """
         
         # Send data til thingsboard if not stopped
-        print("Bike is moving ! ",bike_moving)
         """
         if gps_data and bike_moving:
             telemetry = {"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity}
