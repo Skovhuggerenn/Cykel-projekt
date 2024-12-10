@@ -112,6 +112,8 @@ while True:
         #thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
         reset()                           # reset ESP32
 
+
+
         
 
 
