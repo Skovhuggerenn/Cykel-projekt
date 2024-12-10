@@ -66,22 +66,21 @@ class IMU:
             self.start_time_gps = time()
             
     def alarmCheck(self, alarm_status):
+        imu_data = self.getIMUData()
+        accel_x = imu_data.get("acceleration x")
+        accel_y = imu_data.get("acceleration y")
+        accel_z = imu_data.get("acceleration z")
+        status = False
         if alarm_status:
-            sensitivity = 1500
-            imu_data = self.getIMUData()
-            accel_x = imu_data.get("acceleration x")
-            accel_y = imu_data.get("acceleration y")
-            accel_z = imu_data.get("acceleration z")
+            sensitivity = 2000
+            
             print("Diff x", abs(accel_x - self.prev2_accel_x), "Diff y ", abs(accel_y - self.prev2_accel_y), "Diff z", abs(accel_z - self.prev2_accel_z))
 
             if (abs(accel_x - self.prev2_accel_x) > sensitivity) or (abs(accel_y - self.prev2_accel_y) > sensitivity) or (abs(accel_z - self.prev2_accel_z) > sensitivity):
-                return True
-            else:
-                self.prev2_accel_x = accel_x
-                self.prev2_accel_y = accel_y
-                self.prev2_accel_z = accel_z
-                return False
-        else:
-            return False
-    
+                status = True
+                
+        self.prev2_accel_x = accel_x
+        self.prev2_accel_y = accel_y
+        self.prev2_accel_z = accel_z
+        return status
 

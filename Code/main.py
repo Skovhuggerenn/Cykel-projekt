@@ -24,7 +24,7 @@ lcd_display = LCDDisplay()
 neo_pixel = TheoPixel()
 led_lights = LED_Lights(neo_pixel)
 
-alarm_status = True
+alarm_status = False
 
 # the handler callback that gets called when there is a RPC request from the server
 def rpc_request_handler(req_id, method, params):
@@ -34,11 +34,8 @@ def rpc_request_handler(req_id, method, params):
     print(params, "params type:", type(params))
     try:
         if method == "Alarm_status":
-            if params:
-                alarm_status = True
-            else:
-                alarm_status = False
-            print("Set alarm status pls ",alarm_status)
+            global alarm_status
+            alarm_status = params
 
     except TypeError as e:
         print(e)
@@ -56,7 +53,7 @@ while True:
         bat_current = ina.getCurrent()
         bat_vol = ina.getVoltage()
         average_current = ina.getAverageCurrent(bat_current)
-        bat_life = ina.getEstimateBatLifeHours(bat_p, average_current)
+        bat_life = ina.getEstimateBatLifeSec(bat_p, average_current)
         
         # Temperature & Humidity measurements
         temp = temp_sen.getTemp()
@@ -68,7 +65,7 @@ while True:
         brake_status = imu_sen.brakeCheck(10000)
         led_lights.ledLightOnBrake(brake_status)
         # Stopped check
-        bike_moving =  imu_sen.imu_stoppedCheck()
+        #bike_moving =  imu_sen.imu_stoppedCheck()
         
         # Alarm system 
         thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
@@ -100,11 +97,11 @@ while True:
         """
         
         # Send data til thingsboard if not stopped
-        
+        """
         if gps_data and bike_moving:
             telemetry = {"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity}
             thingsboard.sendDataToThingsboard(telemetry)
-    
+        """
         sleep(1)
 
     except KeyboardInterrupt:
@@ -113,6 +110,8 @@ while True:
         reset()                           # reset ESP32
 
         
+
+
 
 
 
