@@ -24,6 +24,24 @@ lcd_display = LCDDisplay()
 neo_pixel = TheoPixel()
 led_lights = LED_Lights(neo_pixel)
 
+alarm_status = True
+
+# the handler callback that gets called when there is a RPC request from the server
+def rpc_request_handler(req_id, method, params):
+    """handler callback to recieve RPC from server """
+     # handler signature is callback(req_id, method, params)
+    print(f'Response {req_id}: {method}, params {params}')
+    print(params, "params type:", type(params))
+    try:
+        if method == "Alarm_status":
+            if params:
+                alarm_status = True
+            else:
+                alarm_status = False
+            print("Set alarm status pls ",alarm_status)
+
+    except TypeError as e:
+        print(e)
 
 while True:
     try:
@@ -47,45 +65,46 @@ while True:
         # IMU measurements
         imu_data = imu_sen.getIMUData()
         # Brake light check
-        brake_status = imu_sen.brakeCheck(4000)
+        brake_status = imu_sen.brakeCheck(10000)
         led_lights.ledLightOnBrake(brake_status)
         # Stopped check
         bike_moving =  imu_sen.imu_stoppedCheck()
-        print(bike_moving)
+        
+        # Alarm system 
+        thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
+        # Checking for incoming subscriptions or RPC call requests (non-blocking)
+        thingsboard.client.check_msg()
+        alarm_activated = imu_sen.alarmCheck(alarm_status)
+        if alarm_activated:
+            led_lights.led_alarm.on()
+            buzzer.buzzNonBlock(330, 2000)
+        else:
+            led_lights.led_alarm.off()
+            buzzer.cutOff()
         
         # GPS measurements
         gps_data = gps_sen.get_gps_data()
-        print(gps_data)
         
-        # Buzzer
-        #buzzer.buzzNonBlock(330, 2000)
-        
-        # Neopixel
-        #neo_pixel.set_color(150, 0, 0)
-        
-        # Alarm system (TODO)
-        
-        
-        # Display on LCD (Need to be done Non-blocking style)
+        # Display on LCD
         lcd_display.putDataOnLCD(int(bat_p), "%")
         lcd_display.putDataOnLCD(int(bat_current), "mA")
         lcd_display.putDataOnLCD(int(bat_vol), "V")
         lcd_display.putDataOnLCD(int(bat_life), "h")
-        #lcd_display.putTempOnLCD(temp)
-        #lcd_display.putDataOnLCD(humidity, "Humidity")
+        lcd_display.putTempOnLCD(temp)
+        lcd_display.putDataOnLCD(humidity, "Humidity")
         
         # Print to console (TODO)
         """
-        print("Battery: " + str(int(bat_p)) + "%")
-        print("Current: " + str(int(bat_current)) + "mA")
+        #print("Battery: " + str(int(bat_p)) + "%")
+        #print("Current: " + str(int(bat_current)) + "mA")
         """
         
         # Send data til thingsboard if not stopped
         
-        if gps_data:
+        if gps_data and bike_moving:
             telemetry = {"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity}
             thingsboard.sendDataToThingsboard(telemetry)
-        
+    
         sleep(1)
 
     except KeyboardInterrupt:
@@ -94,6 +113,7 @@ while True:
         reset()                           # reset ESP32
 
         
+
 
 
 

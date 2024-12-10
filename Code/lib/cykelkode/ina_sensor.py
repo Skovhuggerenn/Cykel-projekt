@@ -15,6 +15,7 @@ class INA:
         
         self.tot_current = 0
         self.current_counter = 0
+        self.prev_batlife_hours = 0
     
     def getCurrent(self):
         return self.ina219.get_current()
@@ -24,9 +25,8 @@ class INA:
     
     def getEstimateBatLifeHours(self, procent, average_current):
         if average_current > 0:
-            return (self.bat_mAh * (1/procent)) / average_current
-        else:
-            return 0
+            self.prev_batlife_hours = (self.bat_mAh * (1/procent)) / average_current
+        return self.prev_batlife_hours
         
     def getAverageCurrent(self, current):
         num_of_measurements = 20
