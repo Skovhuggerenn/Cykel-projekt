@@ -13,7 +13,7 @@ from cykelkode.lcd_display import LCDDisplay
 from cykelkode.led_light import LED_Lights
 from cykelkode.neo_pixel import TheoPixel
 
-thingsboard = ThingsBoard()
+#thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
 ina = INA()
 temp_sen = TempSensor()
@@ -65,12 +65,12 @@ while True:
         brake_status = imu_sen.brakeCheck(10000)
         led_lights.ledLightOnBrake(brake_status)
         # Stopped check
-        #bike_moving =  imu_sen.imu_stoppedCheck()
+        bike_moving =  imu_sen.imu_stoppedCheck()
         
         # Alarm system 
-        thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
+        #thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
         # Checking for incoming subscriptions or RPC call requests (non-blocking)
-        thingsboard.client.check_msg()
+        #thingsboard.client.check_msg()
         alarm_activated = imu_sen.alarmCheck(alarm_status)
         if alarm_activated:
             led_lights.led_alarm.on()
@@ -97,6 +97,7 @@ while True:
         """
         
         # Send data til thingsboard if not stopped
+        print("Bike is moving ! ",bike_moving)
         """
         if gps_data and bike_moving:
             telemetry = {"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity}
@@ -106,10 +107,12 @@ while True:
 
     except KeyboardInterrupt:
         print("Disconnected!")
-        thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
+        #thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
         reset()                           # reset ESP32
 
         
+
+
 
 
 
