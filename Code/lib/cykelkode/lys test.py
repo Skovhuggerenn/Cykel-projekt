@@ -1,7 +1,7 @@
 from machine import ADC, Pin
-import time
+from time import sleep
 
-adc = ADC(Pin())
+adc = ADC(Pin(36))
 
 adc.width(ADC.WIDTH_12BIT)
 
@@ -10,7 +10,7 @@ adc.atten(ADC.ATTN_11DB)
 while True:
     
     value= adc.read()
-    
+    print(value)
     if value < 41:
         print("Mørkt")
     elif value < 819:
