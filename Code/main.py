@@ -79,11 +79,12 @@ while True:
         else:
             led_lights.led_alarm.off()
             buzzer.cutOff()
-        
-        væske_reminder.checkReminderStatus(temp)
-        
+          
         # GPS measurements
         gps_data = gps_sen.get_gps_data()
+        
+        if gps_data:
+            væske_reminder.checkReminderStatus(bike_moving, temp, humidity, (gps_data[0], gps_data[1]))
         
         # Display on LCD
         lcd_display.putDataOnLCD(int(bat_p), "%")
@@ -115,6 +116,8 @@ while True:
 
 
         
+
+
 
 
 
