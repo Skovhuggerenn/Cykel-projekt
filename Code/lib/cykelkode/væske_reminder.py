@@ -8,40 +8,57 @@ class VæskeReminder:
         self.drink_time = self.BASE_TIME
         
         self.start_time = 0
-        self.temp_start_time = 0
         self.gps_start_time = 0
         
-        self.latitude = -999.0
-        self.longitude = -999.0
+        self.prev_latitude = -999.0
+        self.prev_longitude = -999.0
         
         self.led = Pin(13, Pin.OUT)
         self.pb = Pin(35, Pin.IN)
-        
-    # NOT WORKING     
-    def checkReminderStatus(self, temp, humidity, lat_lon):
-        if time() - self.temp_start_time >= 10:
-            temporary_time = self.BASE_TIME
-            if temp >= 26:
-                temporary_time = temporary_time - 2
-            if humidity >= 30:
-                temporary_time = temporary_time - 3
-            self.drink_time = temporary_time       
-        
-        if time() - self.gps_start_time >= 10:
+    
+    def updateTimer(self):         
+        if time() - self.gps_start_time >= 300:
             if not lat_lon:
-                if self.latitude == -999.0 and self.longitude == -999.0:
+                if self.prev_latitude == -999.0 and self.prev_longitude == -999.0:
                     self.latitude = lat_lon[0]
                     self.longitude = lat_lon[1]
                 else:
-                    dist = getDistanceFromLatLonInKm(self.latitude, self.longitude, lat_lon[0], lat_lon[1])
-                    if dist >= 5:
-                        temporary_time = temporary_time - 5
-        
-        if self.pb.value() == 1:
+                    dist = getDistanceFromLatLonInKm(self.prev_latitude, self.prev_longitude, lat_lon[0], lat_lon[1])
+                    if dist >= 1.5:
+                        self.drink_time *= 0.9
+                    elif dist <= 0.8:
+                        self.drink_time *= 1.05
+                    else:
+                        self.drink_time *= 0.99
+                    self.prev_latitude = lat_lon[0]
+                    self.prev_longitude = lat_lon[1]
+    
+    def updateTimerBasedOnTemp(self, temp, humidity):
+        if temp >= 25:
+            self.drink_time = 600
+        elif temp <= 10:
+            self.drink_time = 1200
+        else:
+            self.drink_time = 900
+        if humidity >= 75:
+            self.drink_time -= 120
+        elif humidity <= 25:
+            self.drink_time += 120
+        else:
+            self.drink_time -= 60
+                
+    def checkReminderStatus(self, bike_moving, temp, humidity):
+        if bike_moving:
+            if pb.value() == 1:
+                self.led.off()
+                self.start_time = time()
+                self.drink_time = updateTimerBasedOnTemp(temp, humidity)
+            if time() - self.start_time >= self.drink_time:
+                self.led.on()
+        else:
             self.led.off()
             self.start_time = time()
-        if time() - self.start_time >= self.drink_time:
-            self.led.on()
+            self.drink_time = updateTimerBasedOnTemp(temp, humidity)
             
     def getDistanceFromLatLonInKm(self, lat1,lon1,lat2,lon2):
         R = 6371; 
