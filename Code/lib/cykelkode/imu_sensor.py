@@ -28,9 +28,9 @@ class IMU:
         accel_y = imu_data.get("acceleration y")
         
         if accel_y <= -brake_sensitivity: 
-            return True
+            return accel_y
         else:
-            return False
+            return 0
         
     def imu_stoppedCheck(self):
         sensitivity = 1500

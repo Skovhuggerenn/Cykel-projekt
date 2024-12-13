@@ -73,11 +73,11 @@ while True:
         
         # IMU measurements
         #imu_data = imu_sen.getIMUData()
-        imu_sen.printIMUData()
+        #imu_sen.printIMUData()
         
         # Brake light check
-        #brake_status = imu_sen.brakeCheck(500)
-        #led_lights.ledLightOnBrake(brake_status)
+        brake_status = imu_sen.brakeCheck(1500)
+        neo_pixel.ledLightOnBrake(brake_status)
         # Stopped check
         #bike_moving =  imu_sen.imu_stoppedCheck()
         
@@ -98,7 +98,7 @@ while True:
         """
         
         # GPS measurements
-        gps_data = gps_sen.get_gps_data()
+        #gps_data = gps_sen.get_gps_data()
         """
         væske_reminder.checkReminderStatus(bike_moving, temp, humidity)
         

@@ -12,17 +12,7 @@ class LED_Lights:
         #self.led_alarm = Pin(18, Pin.OUT)
         
     
-    def ledLightOnBrake(self, brake_status):
-        if brake_status and not self.brake_active:
-            self.brake_timer_start = ticks_ms()
-            self.brake_active = True
-            #self.led_brake.on()
-            self.neo_pixel.set_color(5, 0, 0)
-        else:
-            if (ticks_ms() - self.brake_timer_start) >= 5000:
-                #self.led_brake.off()
-                self.neo_pixel.clear()
-                self.brake_active = False
+
                 
             
             
