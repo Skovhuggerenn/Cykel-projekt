@@ -1,13 +1,13 @@
 from machine import I2C, Pin
 from mpu6050 import MPU6050
-from time import ticks_ms, time
+from time import time, sleep
 
 class IMU:
     def __init__(self):
         i2c = I2C(0)
         self.imu = MPU6050(i2c)
         self.wait_counted = 0
-        self.start_time_gps = 0
+        self.start_time_gps = time()
         self.moving_status = True
         
         imu_data = self.imu.get_values()
@@ -38,7 +38,7 @@ class IMU:
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
-
+        print(time() - self.start_time_gps)
         if (time() - self.start_time_gps) >= 5:  
             if self.wait_counted == 3:
                 print("3 min has passed and i have not moved")
@@ -85,6 +85,4 @@ class IMU:
         self.prev2_accel_y = accel_y
         self.prev2_accel_z = accel_z
         return status
-
-
 

@@ -4,12 +4,11 @@ from machine import Pin
 
 class VæskeReminder:
     def __init__(self):
-        self.BASE_TIME = 5
-        self.drink_time = self.BASE_TIME
+        self.drink_time = 10
         
-        self.start_time = 0
-        self.temp_start_time = 0
-        self.gps_start_time = 0
+        self.start_time = time()
+        self.temp_start_time = time()
+        self.gps_start_time = time()
         
         self.prev_latitude = -999.0
         self.prev_longitude = -999.0
@@ -17,20 +16,25 @@ class VæskeReminder:
         self.led = Pin(13, Pin.OUT)
         self.pb = Pin(35, Pin.IN)
     
-    def updateTimer(self):     
-        
-        if time() - self.gps_start_time >= 10:
+    def updateTimerBasedOnGPS(self, lat_lon):     
+        if time() - self.gps_start_time >= 300:
             if not lat_lon:
                 if self.latitude == -999.0 and self.longitude == -999.0:
                     self.latitude = lat_lon[0]
                     self.longitude = lat_lon[1]
                 else:
                     dist = getDistanceFromLatLonInKm(self.latitude, self.longitude, lat_lon[0], lat_lon[1])
-                    if dist >= 5:
-                        self.drink_time -= 5
+                    if dist >= 1.5:
+                        self.drink_time *= 0.90
+                    elif dist <= 0.8:
+                        self.drink_time *= 1.05
+                    else:
+                        self.drink_time *= 0.95
                     self.prev_latitude = lat_lon[0]
-                    self.prev_longitude = lat_lon[1]
+                    self.prev_longitude = lat_lon[1]      
+            self.gps_start_time = time()
     
+
     def updateTimerBasedOnTemp(self, temp, humidity):
         if temp >= 25:
             self.drink_time = 10
@@ -38,7 +42,6 @@ class VæskeReminder:
             self.drink_time = 20
         else:
             self.drink_time = 15
-        
         if humidity >= 75:
             self.drink_time -= 2
         elif humidity <= 25:

@@ -14,6 +14,7 @@ class GPS:
         if self.gps.receive_nmea_data():            # check if data is recieved
                                                   # check if the data is valid
             if self.gps.get_latitude() != -999.0 and self.gps.get_longitude() != -999.0 and self.gps.get_validity() == "A":
+                print("Valid GPS DATA!!!")
                 lat = self.gps.get_latitude()  # store latitude in lat variable
                 lon = self.gps.get_longitude() # stor longitude in lon variable
                 speed = self.gps.get_speed()
