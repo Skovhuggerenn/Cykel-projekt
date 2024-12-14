@@ -1,4 +1,4 @@
-from time import time, sleep
+from time import time
 import math
 from machine import Pin
 
@@ -6,9 +6,9 @@ class VæskeReminder:
     def __init__(self):
         self.drink_time = 10
         
-        self.start_time = 0
-        self.temp_start_time = 0
-        self.gps_start_time = 0
+        self.start_time = time()
+        self.temp_start_time = time()
+        self.gps_start_time = time()
         
         self.prev_latitude = -999.0
         self.prev_longitude = -999.0
@@ -19,11 +19,11 @@ class VæskeReminder:
     def updateTimerBasedOnGPS(self, lat_lon):     
         if time() - self.gps_start_time >= 300:
             if not lat_lon:
-                if self.latitude == -999.0 and self.longitude == -999.0:
-                    self.latitude = lat_lon[0]
-                    self.longitude = lat_lon[1]
+                if self.prev_latitude == -999.0 and self.prev_longitude == -999.0:
+                    self.prev_latitude = lat_lon[0]
+                    self.prev_longitude = lat_lon[1]
                 else:
-                    dist = getDistanceFromLatLonInKm(self.latitude, self.longitude, lat_lon[0], lat_lon[1])
+                    dist = getDistanceFromLatLonInKm(self.prev_latitude, self.prev_longitude, lat_lon[0], lat_lon[1])
                     if dist >= 1.5:
                         self.drink_time *= 0.90
                     elif dist <= 0.8:
@@ -41,8 +41,7 @@ class VæskeReminder:
         elif temp <= 10:
             self.drink_time = 20
         else:
-            self.drink_time = 15
-        
+            self.drink_time = 15 
         if humidity >= 75:
             self.drink_time -= 2
         elif humidity <= 25:
@@ -52,7 +51,6 @@ class VæskeReminder:
             
     def checkReminderStatus(self, bike_moving, temp, humidity):
         if bike_moving:
-            print("TEST", time(), self.start_time, self.drink_time)
             if self.pb.value() == 1:
                 self.led.off()
                 self.start_time = time()

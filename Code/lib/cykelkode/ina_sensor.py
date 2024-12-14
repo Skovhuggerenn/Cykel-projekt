@@ -5,7 +5,7 @@ from ina219_lib import INA219
 
 class INA:
     def __init__(self, i2c):
-        self.bat_mAh = 1800
+        self.BAT_MAH = 1800
         ina219_i2c_addr = 0x40
         self.ina219 = INA219(i2c,  ina219_i2c_addr)
         self.ina219.set_calibration_16V_400mA()
@@ -22,11 +22,11 @@ class INA:
     
     def getEstimateBatLifeSec(self, procent, average_current):
         if average_current > 0:
-            self.prev_batlife_sec = ((self.bat_mAh * (procent/100)) / average_current) * 3600
+            self.prev_batlife_sec = ((self.BAT_MAH * (procent/100)) / average_current) * 3600
         return self.prev_batlife_sec
         
     def getAverageCurrent(self, current):
-        num_of_measurements = 20
+        num_of_measurements = 10
         self.current_counter += 1
         if self.current_counter < num_of_measurements:
             self.tot_current += current
