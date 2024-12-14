@@ -3,7 +3,7 @@ from dht import DHT11
 
 class TempSensor:
     def __init__(self):
-        dht11_pin = 19
+        dht11_pin = 0
         self.dht11 = DHT11(Pin(dht11_pin))
     
     def getTemp(self):

@@ -6,9 +6,9 @@ class VæskeReminder:
     def __init__(self):
         self.drink_time = 10
         
-        self.start_time = time()
-        self.temp_start_time = time()
-        self.gps_start_time = time()
+        self.start_time = 0
+        self.temp_start_time = 0
+        self.gps_start_time = 0
         
         self.prev_latitude = -999.0
         self.prev_longitude = -999.0
@@ -42,6 +42,7 @@ class VæskeReminder:
             self.drink_time = 20
         else:
             self.drink_time = 15
+        
         if humidity >= 75:
             self.drink_time -= 2
         elif humidity <= 25:
@@ -51,16 +52,17 @@ class VæskeReminder:
             
     def checkReminderStatus(self, bike_moving, temp, humidity):
         if bike_moving:
-            if pb.value() == 1:
+            print("TEST", time(), self.start_time, self.drink_time)
+            if self.pb.value() == 1:
                 self.led.off()
                 self.start_time = time()
-                self.drink_time = updateTimerBasedOnTemp(temp, humidity)
+                self.drink_time = self.updateTimerBasedOnTemp(temp, humidity)
             if time() - self.start_time >= self.drink_time:
                 self.led.on()
         else:
             self.led.off()
             self.start_time = time()
-            self.drink_time = updateTimerBasedOnTemp(temp, humidity)
+            self.drink_time = self.updateTimerBasedOnTemp(temp, humidity)
             
     def getDistanceFromLatLonInKm(self, lat1,lon1,lat2,lon2):
         R = 6371; 
@@ -75,6 +77,7 @@ class VæskeReminder:
 
     def deg2rad(self, deg):
         return deg * (math.pi/180)
+
 
 
 

@@ -16,9 +16,9 @@ class TheoPixel:
             self.np.write()
 
     def ledLightOnBrake(self, brake_status):
-        if brake_status == 0:
-            self.np.clear()
+        if brake_status >= 0:
+            self.clear()
         # -32768 -> 0
         brightness = (abs(brake_status)/10000) * 255
-        self.np.set_color(int(brightness),0, 0)
+        self.set_color(int(brightness), 0, 0)
     

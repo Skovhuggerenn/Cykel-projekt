@@ -21,7 +21,7 @@ class GPS:
                 course = self.gps.get_course()
                 return lat, lon, speed, course               # multiple return values, needs unpacking or it will be tuple format
             else:                              # if latitude and longitude are invalid
-                #print(f"GPS data to server not valid:\nlatitude: {lat}\nlongtitude: {lon}")
+                print(f"GPS data to server not valid:\nlatitude: {lat}\nlongtitude: {lon}")
                 return False
         else:
             return False
