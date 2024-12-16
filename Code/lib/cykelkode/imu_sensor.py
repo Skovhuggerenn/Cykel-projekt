@@ -7,6 +7,9 @@ class IMU:
         self.imu = MPU6050(i2c)
         self.wait_counted = 0
         self.start_time_gps = time()
+        self.start_time_alarm = time()
+        self.start_time_gps_interrupt = time()
+        self.moving_status = True
         
         imu_data = self.imu.get_values()
         self.prev_accel_x = imu_data.get("acceleration x")
@@ -34,33 +37,30 @@ class IMU:
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
-
-        if (time() - self.start_time_gps) >= 5:  
-            if self.wait_counted == 3:
-                print("3 min has passed and i have not moved")
-                print("Diff x", abs(accel_x - self.prev_accel_x), "Diff y ", abs(accel_y - self.prev_accel_y), "Diff z", abs(accel_z - self.prev_accel_z))
+        
+        if not self.moving_status:
+            if time() - self.start_time_gps_interrupt >= 1:
                 if (abs(accel_x - self.prev_accel_x) > sensitivity) or (abs(accel_y - self.prev_accel_y) > sensitivity) or (abs(accel_z - self.prev_accel_z) > sensitivity):
                     self.wait_counted = 0
-                    print("We moving again after minutes")
                     self.moving_status = True
-                else:
-                    self.moving_status = False
-            else:
-                print("Diff x", abs(accel_x - self.prev_accel_x), "Diff y ", abs(accel_y - self.prev_accel_y), "Diff z", abs(accel_z - self.prev_accel_z))
-                if (abs(accel_x - self.prev_accel_x) <= sensitivity) and (abs(accel_y - self.prev_accel_y) <= sensitivity) and (abs(accel_z - self.prev_accel_z) <= sensitivity):
+                self.start_time_gps_interrupt = time()
+                
+        
+        if (time() - self.start_time_gps) >= 10 and self.moving_status:
+            if (abs(accel_x - self.prev_accel_x) <= sensitivity) and (abs(accel_y - self.prev_accel_y) <= sensitivity) and (abs(accel_z - self.prev_accel_z) <= sensitivity):
                     print("Same location increase counter")
-                    self.wait_counted += 1     
-                else:
-                    print("Stil moving!")
-                    self.wait_counted = 0
-                    self.prev_accel_x = accel_x
-                    self.prev_accel_y = accel_y
-                    self.prev_accel_z = accel_z
+                    self.wait_counted += 1
+                    if (self.wait_counted == 3):
+                        self.moving_status = False
+            else:
+                print("Stil moving!")
+                self.wait_counted = 0
                 self.moving_status = True
+                
             self.start_time_gps = time()
-        accel_x = imu_data.get("acceleration x")
-        accel_y = imu_data.get("acceleration y")
-        accel_z = imu_data.get("acceleration z")
+        self.prev_accel_x = accel_x
+        self.prev_accel_y = accel_y
+        self.prev_accel_z = accel_z
         return self.moving_status
             
     def alarmCheck(self, alarm_status, sensitivity):
@@ -69,10 +69,12 @@ class IMU:
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
         status = False
-        if alarm_status:      
-            print("Diff x", abs(accel_x - self.prev2_accel_x), "Diff y ", abs(accel_y - self.prev2_accel_y), "Diff z", abs(accel_z - self.prev2_accel_z))
-            if (abs(accel_x - self.prev2_accel_x) > sensitivity) or (abs(accel_y - self.prev2_accel_y) > sensitivity) or (abs(accel_z - self.prev2_accel_z) > sensitivity):
-                status = True              
+        if (time() - self.start_time_alarm) >= 1: 
+            if alarm_status:      
+                #print("Diff x", abs(accel_x - self.prev2_accel_x), "Diff y ", abs(accel_y - self.prev2_accel_y), "Diff z", abs(accel_z - self.prev2_accel_z))
+                if (abs(accel_x - self.prev2_accel_x) > sensitivity) or (abs(accel_y - self.prev2_accel_y) > sensitivity) or (abs(accel_z - self.prev2_accel_z) > sensitivity):
+                    status = True
+                self.start_time_alarm = time()
         self.prev2_accel_x = accel_x
         self.prev2_accel_y = accel_y
         self.prev2_accel_z = accel_z

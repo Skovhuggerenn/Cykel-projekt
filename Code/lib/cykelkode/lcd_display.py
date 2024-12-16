@@ -40,7 +40,7 @@ class LCDDisplay:
         
     
     
-    def putDataOnLCD(self, bat_p, bat_current, bat_vol, bat_life, temp, humidity, bike_moving, alarm, gps_data):
+    def putDataOnLCD(self, bat_p, bat_current, bat_vol, bat_life, temp, humidity, bike_moving, alarm, gps_data, væske_timer):
         self.lcd.clear()
         self.lcd.move_to(0, 0)
         self.lcd.putstr(str(bat_p)+"% " + str(bat_current)+" mA "+str(bat_vol)+" V")
@@ -61,14 +61,17 @@ class LCDDisplay:
             self.lcd.putchar(chr(2))
         if alarm:
             self.lcd.putstr(" A: ")
-            self.lcd.move_to(10, 2)
+            self.lcd.move_to(6, 2)
             self.lcd.putchar(chr(1))
         else:
             self.lcd.putstr(" A: ")
-            self.lcd.move_to(10, 2)
+            self.lcd.move_to(6, 2)
             self.lcd.putchar(chr(2))
+        if væske_timer:
+            self.lcd.move_to(8, 2)
+            self.lcd.putstr(str(væske_timer[0]) + "m "+ str(væske_timer[1])+"s")
         self.lcd.move_to(0, 3)
         if gps_data:
-            self.lcd.putstr("GPS:"+str(gps_data[0])+" "+str(gps_data[1])+" "+str(gps_data[2])+" "+str(gps_data[3]))
+            self.lcd.putstr("G:"+str(gps_data[0])+" "+str(gps_data[1]))
 
 
