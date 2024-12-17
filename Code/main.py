@@ -1,6 +1,6 @@
 from time import sleep, time, ticks_ms
 import gc
-from machine import Pin, reset, I2C
+from machine import Pin, reset, I2C, SoftI2C
 
 from cykelkode.thingsboard import ThingsBoard
 from cykelkode.battery_status import BatteryStatus
@@ -28,7 +28,7 @@ def rpc_request_handler(req_id, method, params):
         print(e)
 
 
-thingsboard = ThingsBoard()
+#thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
 i2c = I2C(0)
 ina = INA(i2c)
@@ -66,7 +66,7 @@ bat_life = (0, 0 ,0)
 bike_moving = True
 alarm_status = False
 alarm_active = False
-thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
+#thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
 
 while True:
     try:
@@ -89,7 +89,6 @@ while True:
             humidity = temp_sen.getHumidity()
             start_temp = time()
             
-    
         # GPS measurements
         if time() - start_gps >= gps_threshold:
             gps_data = gps_sen.get_gps_data()
@@ -128,7 +127,7 @@ while True:
         # Display on LCD & Print to console
         
         if time() - start_prints >= print_threshold:
-            lcd_display.putDataOnLCD(int(bat_p), int(bat_current), int(bat_vol), bat_life, temp, humidity, bike_moving, alarm_status, gps_data, væske_timer)
+            lcd_display.putDataOnLCD(int(bat_p), int(bat_current), bat_vol, bat_life, temp, humidity, bike_moving, alarm_status, gps_data, væske_timer)
             
             imu_sen.printIMUData()
             
@@ -149,6 +148,7 @@ while True:
         
         
         # Send data til thingsboard if not stopped
+        """
         telemetry = {}
         if time() - start_thingsboard >= thingsboard_threshold:
             thingsboard.client.check_msg()
@@ -159,12 +159,12 @@ while True:
             if telemetry:
                 thingsboard.sendDataToThingsboard(telemetry)
             start_thingsboard = time()
-        
+        """
         sleep(0.1)
 
     except KeyboardInterrupt:
         print("Disconnected!")
-        thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
+        #thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
         reset()                           # reset ESP32
 
 

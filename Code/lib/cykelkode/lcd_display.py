@@ -45,7 +45,7 @@ class LCDDisplay:
         self.lcd.move_to(0, 0)
         self.lcd.putstr(str(bat_p)+"% " + str(bat_current)+" mA "+str(bat_vol)+" V")
         self.lcd.move_to(0, 1)
-        self.lcd.putstr(str(bat_life[0])+"h" + str(bat_life[1]) + "m" + str(bat_life[2])+ "s")
+        self.lcd.putstr(str(int(bat_life[0]))+"h" + str(int(bat_life[1])) + "m" + str(int(bat_life[2]))+ "s")
         self.lcd.move_to(9, 1)
         self.lcd.putstr(" T:"+str(temp)+" H:"+str(humidity)+"%")
         self.lcd.move_to(14, 1)

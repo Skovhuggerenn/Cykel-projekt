@@ -13,8 +13,8 @@ class VæskeReminder:
         self.prev_latitude = -999.0
         self.prev_longitude = -999.0
         
-        self.led = Pin(13, Pin.OUT)
-        self.pb = Pin(35, Pin.IN)
+        self.led = Pin(4, Pin.OUT)
+        self.pb = Pin(2, Pin.IN)
     
     
     def updateTimerBasedOnGPS(self, lat_lon):     
