@@ -3,7 +3,7 @@ from adc_sub import ADC_substitute
 class BatteryStatus:
     def __init__(self):
         pin_U = 34
-        self.lin = self.getSlope(1963, 3120, 3.0, 4.2)
+        self.lin = self.getSlope(1419, 2255, 3.0, 4.2)
         self.adcsub = ADC_substitute(pin_U)
 
 
