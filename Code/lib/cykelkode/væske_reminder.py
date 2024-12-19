@@ -4,7 +4,7 @@ from machine import Pin
 
 class VæskeReminder:
     def __init__(self):
-        self.drink_time = 10
+        self.drink_time = 900
         
         self.start_time = time()
         self.temp_start_time = time()
@@ -13,8 +13,8 @@ class VæskeReminder:
         self.prev_latitude = -999.0
         self.prev_longitude = -999.0
         
-        self.led = Pin(13, Pin.OUT)
-        self.pb = Pin(35, Pin.IN)
+        self.led = Pin(4, Pin.OUT)
+        self.pb = Pin(2, Pin.IN)
     
     
     def updateTimerBasedOnGPS(self, lat_lon):     
@@ -25,30 +25,28 @@ class VæskeReminder:
                     self.prev_longitude = lat_lon[1]
                 else:
                     dist = getDistanceFromLatLonInKm(self.prev_latitude, self.prev_longitude, lat_lon[0], lat_lon[1])
-                    if dist >= 1.5:
-                        self.drink_time = int(self.drink_time * 0.90)
-                    elif dist <= 0.8:
-                        self.drink_time = int(self.drink_time * 1.05)
+                    if dist >= 2.0:
+                        self.drink_time -= 3
+                    elif dist <= 1.0:
+                        self.drink_time -= 1
                     else:
-                        self.drink_time = int(self.drink_time * 0.95)
+                        self.drink_time -= 2
                     self.prev_latitude = lat_lon[0]
                     self.prev_longitude = lat_lon[1]      
             self.gps_start_time = time()
     
 
     def updateTimerBasedOnTemp(self, temp, humidity):
-        if temp >= 25:
-            self.drink_time = 10
-        elif temp <= 10:
-            self.drink_time = 20
-        else:
-            self.drink_time = 15
-        if humidity >= 75:
-            self.drink_time -= 2
-        elif humidity <= 25:
-            self.drink_time += 2
-        else:
-            self.drink_time -= 1
+        self.drink_time = 900
+        if temp >= 15:
+            self.drink_time -= 60
+        elif temp <= 5:
+            self.drink_time -= 120
+        
+        if humidity >= 65:
+            self.drink_time -= 120
+        elif humidity <= 50:
+            self.drink_time -= 60
             
     def checkReminderStatus(self, bike_moving, temp, humidity):
         if bike_moving:

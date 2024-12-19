@@ -45,7 +45,7 @@ class LCDDisplay:
         self.lcd.move_to(0, 0)
         self.lcd.putstr(str(bat_p)+"% " + str(bat_current)+" mA "+str(bat_vol)+" V")
         self.lcd.move_to(0, 1)
-        self.lcd.putstr(str(bat_life[0])+"h" + str(bat_life[1]) + "m" + str(bat_life[2])+ "s")
+        self.lcd.putstr(str(int(bat_life[0]))+"h" + str(int(bat_life[1])) + "m" + str(int(bat_life[2]))+ "s")
         self.lcd.move_to(9, 1)
         self.lcd.putstr(" T:"+str(temp)+" H:"+str(humidity)+"%")
         self.lcd.move_to(14, 1)
@@ -67,9 +67,10 @@ class LCDDisplay:
             self.lcd.putstr(" A: ")
             self.lcd.move_to(6, 2)
             self.lcd.putchar(chr(2))
-        if væske_timer:
+        if gps_data:
             self.lcd.move_to(8, 2)
-            self.lcd.putstr(str(væske_timer[0]) + "m "+ str(væske_timer[1])+"s")
+            self.lcd.putstr("S:"+str(round(gps_data[2],2))+" C:"+str(gps_data[3]))
+            #self.lcd.putstr(str(væske_timer[0]) + "m "+ str(væske_timer[1])+"s")
         self.lcd.move_to(0, 3)
         if gps_data:
             self.lcd.putstr("G:"+str(gps_data[0])+" "+str(gps_data[1]))

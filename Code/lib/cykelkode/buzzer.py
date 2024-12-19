@@ -1,6 +1,7 @@
 from machine import Pin, PWM
 from time import ticks_ms
 
+
 class Buzzer:
     def __init__(self):
         self.start_time = 0
@@ -22,3 +23,4 @@ class Buzzer:
         self.buz.duty(0)
         self.making_sound = False
             
+

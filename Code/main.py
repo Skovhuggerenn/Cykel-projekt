@@ -1,6 +1,6 @@
 from time import sleep, time, ticks_ms
 import gc
-from machine import Pin, reset, I2C
+from machine import Pin, reset, I2C, SoftI2C
 
 from cykelkode.thingsboard import ThingsBoard
 from cykelkode.battery_status import BatteryStatus
@@ -28,7 +28,7 @@ def rpc_request_handler(req_id, method, params):
         print(e)
 
 
-thingsboard = ThingsBoard()
+#thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
 i2c = I2C(0)
 ina = INA(i2c)
@@ -46,7 +46,12 @@ temp_threshold = 60
 gps_threshold = 5
 print_threshold = 3
 thingsboard_threshold = 10
-alarm_active_threshold = 5000
+alarm_active_threshold = 2000
+
+# IMU sensitivity
+alarm_sensitivity = 1000
+brake_sensitivity = 700
+moving_sensitivity = 1000
 
 # Non-blocking timers
 start_battery = time()
@@ -66,7 +71,7 @@ bat_life = (0, 0 ,0)
 bike_moving = True
 alarm_status = False
 alarm_active = False
-thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
+#thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
 
 while True:
     try:
@@ -89,7 +94,6 @@ while True:
             humidity = temp_sen.getHumidity()
             start_temp = time()
             
-    
         # GPS measurements
         if time() - start_gps >= gps_threshold:
             gps_data = gps_sen.get_gps_data()
@@ -98,7 +102,7 @@ while True:
         
         # Alarm system 
         # Checking for incoming subscriptions or RPC call requests (non-blocking)
-        alarm_activated = imu_sen.alarmCheck(alarm_status, 1000)
+        alarm_activated = imu_sen.alarmCheck(alarm_status, alarm_sensitivity)
         if alarm_activated:
             alarm_active = True
             alarm_active_time = ticks_ms() 
@@ -113,10 +117,10 @@ while True:
         # IMU measurements
         if not alarm_status:
             #Brake light check
-            brake_status = imu_sen.brakeCheck(250)
+            brake_status = imu_sen.brakeCheck(brake_sensitivity)
             neo_pixel.ledLightOnBrake(brake_status)
             # Stopped check
-            bike_moving =  imu_sen.imu_stoppedCheck(1000)
+            bike_moving =  imu_sen.imu_stoppedCheck(moving_sensitivity)
             
             # Væske reminder
             væske_timer = væske_reminder.checkReminderStatus(bike_moving, temp, humidity)
@@ -128,7 +132,7 @@ while True:
         # Display on LCD & Print to console
         
         if time() - start_prints >= print_threshold:
-            lcd_display.putDataOnLCD(int(bat_p), int(bat_current), int(bat_vol), bat_life, temp, humidity, bike_moving, alarm_status, gps_data, væske_timer)
+            lcd_display.putDataOnLCD(int(bat_p), int(bat_current), bat_vol, bat_life, temp, humidity, bike_moving, alarm_status, gps_data, væske_timer)
             
             imu_sen.printIMUData()
             
@@ -149,6 +153,7 @@ while True:
         
         
         # Send data til thingsboard if not stopped
+        """
         telemetry = {}
         if time() - start_thingsboard >= thingsboard_threshold:
             thingsboard.client.check_msg()
@@ -159,12 +164,12 @@ while True:
             if telemetry:
                 thingsboard.sendDataToThingsboard(telemetry)
             start_thingsboard = time()
-        
+        """
         sleep(0.1)
 
     except KeyboardInterrupt:
         print("Disconnected!")
-        thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
+        #thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
         reset()                           # reset ESP32
 
 

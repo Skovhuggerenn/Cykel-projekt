@@ -4,7 +4,7 @@ from time import ticks_ms
 
 class TheoPixel:
     def __init__(self):
-        self.np = NeoPixel(Pin(26, Pin.OUT), 12)
+        self.np = NeoPixel(Pin(15, Pin.OUT), 12)
         self.braking_active = False
         self.timer = ticks_ms()
     
