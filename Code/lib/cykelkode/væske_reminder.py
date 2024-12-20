@@ -26,11 +26,11 @@ class VæskeReminder:
                 else:
                     dist = getDistanceFromLatLonInKm(self.prev_latitude, self.prev_longitude, lat_lon[0], lat_lon[1])
                     if dist >= 2.0:
-                        self.drink_time -= 3
+                        self.drink_time -= 180
                     elif dist <= 1.0:
-                        self.drink_time -= 1
+                        self.drink_time -= 60
                     else:
-                        self.drink_time -= 2
+                        self.drink_time -= 120
                     self.prev_latitude = lat_lon[0]
                     self.prev_longitude = lat_lon[1]      
             self.gps_start_time = time()
