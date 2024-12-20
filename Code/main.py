@@ -28,7 +28,7 @@ def rpc_request_handler(req_id, method, params):
         print(e)
 
 
-#thingsboard = ThingsBoard()
+thingsboard = ThingsBoard()
 bat_stat = BatteryStatus()
 i2c = I2C(0)
 ina = INA(i2c)
@@ -43,9 +43,9 @@ væske_reminder = VæskeReminder()
 # Thresholds
 battery_threshold = 10
 temp_threshold = 60
-gps_threshold = 5
+gps_threshold = 1
 print_threshold = 3
-thingsboard_threshold = 10
+thingsboard_threshold = 20
 alarm_active_threshold = 2000
 
 # IMU sensitivity
@@ -71,7 +71,7 @@ bat_life = (0, 0 ,0)
 bike_moving = True
 alarm_status = False
 alarm_active = False
-#thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
+thingsboard.client.set_server_side_rpc_request_handler(rpc_request_handler) 
 
 while True:
     try:
@@ -101,7 +101,6 @@ while True:
         
         
         # Alarm system 
-        # Checking for incoming subscriptions or RPC call requests (non-blocking)
         alarm_activated = imu_sen.alarmCheck(alarm_status, alarm_sensitivity)
         if alarm_activated:
             alarm_active = True
@@ -129,13 +128,11 @@ while True:
                
             
         
-        # Display on LCD & Print to console
-        
+        # Display on LCD & Print to console   
         if time() - start_prints >= print_threshold:
             lcd_display.putDataOnLCD(int(bat_p), int(bat_current), bat_vol, bat_life, temp, humidity, bike_moving, alarm_status, gps_data, væske_timer)
             
             imu_sen.printIMUData()
-            
             print(f"free memory: {gc.mem_free()}") # monitor memory left
             print("Battery: " + str(int(bat_p)) + "%")
             print("Current: " + str(int(bat_current)) + "mA")
@@ -153,23 +150,23 @@ while True:
         
         
         # Send data til thingsboard if not stopped
-        """
         telemetry = {}
         if time() - start_thingsboard >= thingsboard_threshold:
+            # Checking for incoming subscriptions or RPC call requests (non-blocking)
             thingsboard.client.check_msg()
             if gps_data and bike_moving:
-                telemetry.update({"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3]})
+                telemetry.update({"latitude":gps_data[0], "longitude": gps_data[1], "gps_speed": gps_data[2], "gps_course": gps_data[3], "moving_status":bike_moving})
                     
-            telemetry.update({"Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity})
+            telemetry.update({"Battery":bat_p, "Current":bat_current, "Bat_voltage": bat_vol, "Battery_life":bat_life, "Temperature": temp, "Humidity": humidity, "væske_reminder":væske_timer})
             if telemetry:
                 thingsboard.sendDataToThingsboard(telemetry)
             start_thingsboard = time()
-        """
+        
         sleep(0.1)
 
     except KeyboardInterrupt:
         print("Disconnected!")
-        #thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
+        thingsboard.client.disconnect()   # Disconnecting from ThingsBoard
         reset()                           # reset ESP32
 
 

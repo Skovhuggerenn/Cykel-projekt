@@ -1,7 +1,7 @@
 # Wifi credentials
-SSID = 'OnePlus 12R'
-PASSWORD = 'f7zguj3x'
+SSID = 'OnePlus Nord 2'
+PASSWORD = 'b7vc9g3z'
 
 # Server credentials
-ACCESS_TOKEN = 'K4ZlzxhAB6bfELHJl8tR'
+ACCESS_TOKEN = 'GdxfBWuhyB7d7MnxLz9a'
 SERVER_IP_ADDRESS = 'demo.thingsboard.io'

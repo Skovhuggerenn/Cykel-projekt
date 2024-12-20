@@ -24,12 +24,13 @@ class IMU:
         try:
             return self.imu.get_values()
         except OSError:
-            print("IMU FAILED!!!!!!!!!!!!")
+            #print("IMU FAILED!!!!!!!!!!!!")
             return {}
-            
     
     def brakeCheck(self, brake_sensitivity):
         imu_data = self.getIMUData()
+        if not imu_data:
+            return 0
         accel_y = imu_data.get("acceleration y")
         
         if accel_y <= -brake_sensitivity: 
@@ -39,9 +40,12 @@ class IMU:
      
     def imu_stoppedCheck(self, sensitivity):
         imu_data = self.getIMUData()
+        if not imu_data:
+            return self.moving_status 
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
+        
         
         if not self.moving_status:
             if time() - self.start_time_gps_interrupt >= 1:
@@ -53,12 +57,12 @@ class IMU:
         
         if (time() - self.start_time_gps) >= 10 and self.moving_status:
             if (abs(accel_x - self.prev_accel_x) <= sensitivity) and (abs(accel_y - self.prev_accel_y) <= sensitivity) and (abs(accel_z - self.prev_accel_z) <= sensitivity):
-                    print("Same location increase counter")
+                    #print("Same location increase counter")
                     self.wait_counted += 1
                     if (self.wait_counted == 3):
                         self.moving_status = False
             else:
-                print("Stil moving!")
+                #print("Stil moving!")
                 self.wait_counted = 0
                 self.moving_status = True
                 
@@ -70,13 +74,15 @@ class IMU:
             
     def alarmCheck(self, alarm_status, sensitivity):
         imu_data = self.getIMUData()
+        if not imu_data:
+            return False
+        status = False
         accel_x = imu_data.get("acceleration x")
         accel_y = imu_data.get("acceleration y")
         accel_z = imu_data.get("acceleration z")
-        status = False
+        
         if (time() - self.start_time_alarm) >= 1: 
             if alarm_status:      
-                #print("Diff x", abs(accel_x - self.prev2_accel_x), "Diff y ", abs(accel_y - self.prev2_accel_y), "Diff z", abs(accel_z - self.prev2_accel_z))
                 if (abs(accel_x - self.prev2_accel_x) > sensitivity) or (abs(accel_y - self.prev2_accel_y) > sensitivity) or (abs(accel_z - self.prev2_accel_z) > sensitivity):
                     status = True
                 self.start_time_alarm = time()
@@ -87,5 +93,6 @@ class IMU:
 
     def printIMUData(self):
         imu_data = self.getIMUData()
-        print("Accel x: " + str(imu_data.get("acceleration x")) + " Accel y: " + str(imu_data.get("acceleration y")) + " Accel z: "+str(imu_data.get("acceleration z"))  )
+        if imu_data:
+            print("Accel x: " + str(imu_data.get("acceleration x")) + " Accel y: " + str(imu_data.get("acceleration y")) + " Accel z: "+str(imu_data.get("acceleration z"))  )
         
