@@ -1,0 +1,164 @@
+/* Generel CSS til alle sider */
+body {
+  font-family: "Times New Roman", Times, serif, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #cfdeca, #847c68);
+}
+
+header {
+  background-color: #e3d4b4;
+  color: black;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #c1cab2;
+}
+
+nav a {
+  color: black;
+  text-decoration: none;
+  padding: 15px 20px;
+  display: block;
+}
+
+nav a:hover {
+  background-color: #b2c0ca;
+}
+
+nav .logo img {
+  width: 100px;
+  height: 50px;
+  display: block;
+}
+
+/* Landing page */
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.landing {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.landing h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.landing p {
+  font-size: 1.2em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  width: 200px;
+  float: center;
+}
+
+.content {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.content p {
+  display: flex;
+  margin-right: 20px;
+  align-items: center;
+}
+
+.content img {
+  max-width: 200px;
+  height: 200px;
+  object-fit: cover;
+  transition: 1s ease;
+}
+
+.content img:hover {
+  transform: scale(1.2);
+}
+
+/* Flowcharts gallery side */
+
+.flowgal {
+  text-align: center;
+}
+
+.flow-image-1 {
+  height: 1000px;
+  width: 500px;
+  padding: 15px;
+}
+
+.flow-image-2 {
+  height: 1000px;
+  width: auto;
+  padding: 15px;
+}
+
+.flowgal img {
+  transition: transform 0.3s ease;
+}
+
+.flowgal img:hover {
+  transform: rotate(5deg) scale(1.1);
+}
+
+/* Systemtegning side */
+
+.systemgal {
+  text-align: center;
+  padding: 30px;
+}
+
+.systemgal img {
+  transition: border-radius 0.3s ease, transform 0.3s ease;
+  border-radius: 0;
+}
+
+.systemgal img:hover {
+  border-radius: 50%;
+  transform: scale(1.1);
+}
+
+/* Blokdiagrammer side */
+
+.blokgal {
+  text-align: center;
+  padding: 50px;
+}
+
+.blok-image-1 {
+  height: 500px;
+  padding: 15px;
+}
+
+.blok-image-2 {
+  height: 500px;
+  width: 750px;
+  padding: 15px;
+}
+
+.blok-image-3 {
+  height: 500px;
+  width: 750px;
+  padding: 15px;
+}
+
+.blokgal img {
+  transition: 1s ease;
+}
+
+.blokgal img:hover {
+  transform: scale(1.2);
+}
